@@ -1,5 +1,10 @@
 from flask import Flask
 from flask_restx import Api
+import psycopg2
+
+# Conexão à instância RDS na AWS
+url = 'postgres://postgres:postgres@api-deborah.c6u7sarwqno4.us-east-1.rds.amazonaws.com/postgres'
+connection = psycopg2.connect(url)
 
 class Server():
     def __init__(self):
