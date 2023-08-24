@@ -7,10 +7,14 @@ from server.models.professor import professor, Professor
 
 app, api = server.app, server.api
 
-CREATE_PROFISSIONAL = 'INSERT INTO projeto_educacional.profissional (cpf, nome, telefone, email, cargo, data_nascimento, ano_entrada) VALUES (%s, %s, %s, %s, %s, %s, %s)'
+CREATE_PROFISSIONAL = '''INSERT INTO projeto_educacional.profissional (cpf, nome, telefone, email, cargo, data_nascimento, ano_entrada) 
+                        VALUES (%s, %s, %s, %s, %s, %s, %s)'''
 CREATE_PROFESSOR = 'INSERT INTO projeto_educacional.professor VALUES (%s)'
-READ_PROFESSOR = 'SELECT * FROM projeto_educacional.professor WHERE cpf = %s'
+READ_PROFESSOR = '''SELECT profi.* FROM projeto_educacional.professor profe 
+                    INNER JOIN projeto_educacional.profissional profi ON (profe.cpf = profi.cpf) WHERE profe.cpf = %s'''
 DELETE_PROFISSIONAL = 'DELETE FROM projeto_educacional.profissional WHERE cpf = %s'
+UPDATE_PROFISSIONAL = '''UPDATE projeto_educacional.profissional set nome = %s, telefone = %s, email = %s, 
+                        cargo = %s, data_nascimento = %s, ano_entrada = %s WHERE cpf = %s'''
 
 @api.route('/prof')
 class prof(Resource):
@@ -87,12 +91,14 @@ class prof(Resource):
                         professor.telefone = dados['telefone']
                     if 'email' in dados:
                         professor.email = dados['email']
+                    if 'cargo' in dados:
+                        professor.cargo = dados['cargo']
                     if 'data_nascimento' in dados:
                         professor.data_nascimento = dados['data_nascimento']
                     if 'ano_entrada' in dados:
                         professor.ano_entrada = dados['ano_entrada']
                     
-                    return f'Professor atualizado.'
+                    cursor.execute(UPDATE_PROFISSIONAL, (professor.nome, professor.telefone, professor.email, professor.cargo, professor.data_nascimento, professor.ano_entrada))
                     
         except psycopg2.IntegrityError as e:
             return f'Erro de integridade: {e}'

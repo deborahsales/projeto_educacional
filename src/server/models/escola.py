@@ -15,3 +15,9 @@ escola = server.api('Escola', {
     'id_rede': fields.Integer(description='identificador da rede em que a escola está associada', required=True)
 
 })
+
+class Escola(fields.Raw):
+    def format(self, value):
+        return {'inep': value.inep, 'nome': value.nome, 'ano_entrada': value.ano_entrada,
+                'status_escola': value.status_escola, 'tipo': value.tipo, 'dependencia': value.dependencia,
+                'latitude': value.latitude, 'longitude': value.longitude, 'endereco': value.endereco, 'id_rede': value.id_rede}
