@@ -7,7 +7,14 @@ from server.models.escola_prof import escola_prof, EscolaProf
 
 app, api = server.app, server.api
 
-CREATE_PROFISSIONAL = 'INSERT INTO projeto_educacional.profissional (cpf, nome, telefone, email, cargo, data_nascimento, ano_entrada) VALUES (%s, %s, %s, %s, %s, %s, %s)'
-CREATE_PROFESSOR = 'INSERT INTO projeto_educacional.professor VALUES (%s)'
-READ_PROFESSOR = 'SELECT * FROM projeto_educacional.professor WHERE cpf = %s'
-DELETE_PROFISSIONAL = 'DELETE FROM projeto_educacional.profissional WHERE cpf = %s'
+CREATE_ESCOLA_PROF = '''INSERT INTO projeto_educacional.escolas_prof (inep_escola, cpf_professor, vinculo, usuario_plataforma, ch_trabalho, 
+                        matutino, vespertino, noturno) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)'''
+READ_ESCOLA_PROF = 'SELECT * FROM projeto_educacional.escolas_prof WHERE cpf_professor = %s AND inep_escola = %s'
+DELETE_ESCOLA_PROF = 'DELETE FROM projeto_educacional.escolas_prof WHERE cpf_professor = %s AND inep_escola = %s'
+UPDATE_ESCOLA_PROF = '''UPDATE projeto_educacional.escolas_prof SET vinculo = %s, usuario_plataforma = %s, ch_trabalho = %s
+                        matutino = %s, vespertino = %s, noturno = %s WHERE cpf_professor = %s AND inep_escola = %s'''
+
+@api.route('/escola_prof')
+class Escola_Prof(Resource):
+    def create_escola_prof(self):
+        dados = request.json()

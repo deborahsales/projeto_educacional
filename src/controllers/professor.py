@@ -17,7 +17,7 @@ UPDATE_PROFISSIONAL = '''UPDATE projeto_educacional.profissional set nome = %s, 
                         cargo = %s, data_nascimento = %s, ano_entrada = %s WHERE cpf = %s'''
 
 @api.route('/prof')
-class prof(Resource):
+class Prof(Resource):
     def create_prof(self):
         dados = request.get_json()
         cpf = dados.get('cpf')
