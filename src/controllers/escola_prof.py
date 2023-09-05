@@ -3,7 +3,6 @@ from flask import jsonify, request
 from flask_restx import Resource
 from src.server.instance import connection
 from src.server.instance import server
-from server.models.escola_prof import escola_prof, EscolaProf
 
 app, api = server.app, server.api
 

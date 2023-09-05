@@ -1,7 +1,7 @@
 from flask_restx import fields
-from server.instance import server
+from src.server.instance import server
 
-escola = server.api('Escola', {
+escola = server.api.model('Escola', {
 
     'inep': fields.Integer(description='Código da instituição de ensino da escola', required=True),
     'nome': fields.String(description='Nome da escola', required=True),
@@ -9,8 +9,8 @@ escola = server.api('Escola', {
     'status_escola': fields.String(description='Estado em que a escola se encontra', required=True, max=1),
     'tipo': fields.String(description='Tipo da escola: 1 - urbana, 2 - rural', required=True, max=1),
     'dependencia': fields.String(description='Tipo de dependência da escola', required=True, max=1),
-    'latitude': fields.Decimal(description='Latitude da escola'),
-    'longitude': fields.Decimal(description='Longitude da escola'),
+    'latitude': fields.Float(description='Latitude da escola'),
+    'longitude': fields.Float(description='Longitude da escola'),
     'endereco': fields.String(description='Endereço da escola', max=300),
     'id_rede': fields.Integer(description='identificador da rede em que a escola está associada', required=True)
 

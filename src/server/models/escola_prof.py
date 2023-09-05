@@ -1,7 +1,7 @@
 from flask_restx import fields
-from server.instance import server
+from src.server.instance import server
 
-escola_prof = server.api('Escola_Professor', {
+escola_prof = server.api.model('Escola_Professor', {
 
     'inep_escola': fields.Integer(description='Código da instituição de ensino', required=True),
     'cpf_professor': fields.Integer(description='CPF do professor', required=True),

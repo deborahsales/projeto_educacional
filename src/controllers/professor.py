@@ -3,22 +3,22 @@ from flask import jsonify, request
 from flask_restx import Resource
 from src.server.instance import connection
 from src.server.instance import server
-from server.models.professor import professor, Professor
+from src.server.models.professor import professor, Professor
 
 app, api = server.app, server.api
 
-CREATE_PROFISSIONAL = '''INSERT INTO projeto_educacional.profissional (cpf, nome, telefone, email, cargo, data_nascimento, ano_entrada) 
-                        VALUES (%s, %s, %s, %s, %s, %s, %s)'''
+CREATE_PROFISSIONAL = '''INSERT INTO projeto_educacional.profissional (cpf, nome, cargo, data_nascimento, ano_entrada) 
+                        VALUES (%s, %s, %s, %s, %s)'''
 CREATE_PROFESSOR = 'INSERT INTO projeto_educacional.professor VALUES (%s)'
 READ_PROFESSOR = '''SELECT profi.* FROM projeto_educacional.professor profe 
-                    INNER JOIN projeto_educacional.profissional profi ON (profe.cpf = profi.cpf) WHERE profe.cpf = %s'''
+                    INNER JOIN projeto_educacional.profissional profi USING (cpf) WHERE profe.cpf = %s'''
 DELETE_PROFISSIONAL = 'DELETE FROM projeto_educacional.profissional WHERE cpf = %s'
 UPDATE_PROFISSIONAL = '''UPDATE projeto_educacional.profissional set nome = %s, telefone = %s, email = %s, 
                         cargo = %s, data_nascimento = %s, ano_entrada = %s WHERE cpf = %s'''
 
 @api.route('/prof')
 class Prof(Resource):
-    def create_prof(self):
+    def post(self):
         dados = request.get_json()
         cpf = dados.get('cpf')
         nome = dados.get('nome')
@@ -30,7 +30,7 @@ class Prof(Resource):
         try:
             with connection:
                 with connection.cursor() as cursor:
-                    cursor.execute(CREATE_PROFISSIONAL, (cpf, nome, telefone, email, cargo, data_nascimento, ano_entrada))
+                    cursor.execute(CREATE_PROFISSIONAL, (cpf, nome, cargo, data_nascimento, ano_entrada))
                     cursor.execute(CREATE_PROFESSOR, (cpf,))
             return f'Professor cadastrado'
         except psycopg2.IntegrityError as e:
@@ -39,10 +39,10 @@ class Prof(Resource):
             return f'Erro no banco de dados: {e}'
         except Exception as e:
             return f'Erro inesperado: {e}'
-        
-    def read_prof():
+
+    def get(self):
         dados = request.get_json()
-        cpf = dados.get('cpf')
+        cpf = dados['cpf']
         try:
             with connection:
                 with connection.cursor() as cursor:
@@ -59,13 +59,14 @@ class Prof(Resource):
         except Exception as e:
             return f'Erro inesperado: {e}'
         
-    def delete_prof():
+    def delete(self):
         dados = request.get_json()
         cpf = dados.get('cpf')
         try:
             with connection:
                 with connection.cursor() as cursor:
                     cursor.execute(DELETE_PROFISSIONAL, (cpf,))
+            return "Professor excluído com sucesso."
         except psycopg2.IntegrityError as e:
             return f'Erro de integridade: {e}'
         except psycopg2.Error as e:
@@ -73,7 +74,7 @@ class Prof(Resource):
         except Exception as e:
             return f'Erro inesperado: {e}'
         
-    def update_prof():
+    def put(self):
         dados = request.get_json()
         cpf = dados.get('cpf')
         try:
@@ -86,7 +87,7 @@ class Prof(Resource):
                 else:
                     # Ainda será necessário verificar funcionamento da variável 'professor', se é possível acessar dessa forma seus atributos
                     if 'nome' in dados:
-                        professor.nome = dados['nome']
+                        professor.nome = dados.get('nome')
                     if 'telefone' in dados:
                         professor.telefone = dados['telefone']
                     if 'email' in dados:
@@ -99,7 +100,7 @@ class Prof(Resource):
                         professor.ano_entrada = dados['ano_entrada']
                     
                     cursor.execute(UPDATE_PROFISSIONAL, (professor.nome, professor.telefone, professor.email, professor.cargo, professor.data_nascimento, professor.ano_entrada))
-                    
+            return jsonify({"mensagem" : "Cadastro do professor atualizado."}, professor)
         except psycopg2.IntegrityError as e:
             return f'Erro de integridade: {e}'
         except psycopg2.Error as e:
