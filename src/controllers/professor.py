@@ -13,8 +13,8 @@ CREATE_PROFESSOR = 'INSERT INTO projeto_educacional.professor VALUES (%s)'
 READ_PROFESSOR = '''SELECT profi.* FROM projeto_educacional.professor profe 
                     INNER JOIN projeto_educacional.profissional profi USING (cpf) WHERE profe.cpf = %s'''
 DELETE_PROFISSIONAL = 'DELETE FROM projeto_educacional.profissional WHERE cpf = %s'
-UPDATE_PROFISSIONAL = '''UPDATE projeto_educacional.profissional set nome = %s, telefone = %s, email = %s, 
-                        cargo = %s, data_nascimento = %s, ano_entrada = %s WHERE cpf = %s'''
+SQL_UPDATE = 'UPDATE projeto_educacional.profissional SET '
+
 
 @api.route('/prof')
 class Prof(Resource):
@@ -85,22 +85,43 @@ class Prof(Resource):
                 if professor == None:
                     return f'professor {cpf} não encontrado'
                 else:
+                    primeiro = True
+                    sql = SQL_UPDATE
                     # Ainda será necessário verificar funcionamento da variável 'professor', se é possível acessar dessa forma seus atributos
                     if 'nome' in dados:
-                        professor.nome = dados.get('nome')
+                        sql += f"nome = '{dados.get('nome')}'"
+                        
+                        primeiro = False
                     if 'telefone' in dados:
-                        professor.telefone = dados['telefone']
+                        if (not primeiro):
+                            sql += ', '
+                        sql += "telefone = '{" + dados.get('telefone') + "}'"
+                        primeiro = False
                     if 'email' in dados:
-                        professor.email = dados['email']
+                        if (not primeiro):
+                            sql += ', '
+                        sql += "email = '{" + dados.get('email') + "}'"
+                        primeiro = False
                     if 'cargo' in dados:
-                        professor.cargo = dados['cargo']
+                        if (not primeiro):
+                            sql += ', '     
+                        sql += f"cargo = '{dados.get('cargo')}'"
+                        primeiro = False
                     if 'data_nascimento' in dados:
-                        professor.data_nascimento = dados['data_nascimento']
+                        if (not primeiro):
+                            sql += ', '
+                        sql += f"data_nascimento = '{dados.get('data_nascimento')}'"
+                        primeiro = False
                     if 'ano_entrada' in dados:
-                        professor.ano_entrada = dados['ano_entrada']
-                    
-                    cursor.execute(UPDATE_PROFISSIONAL, (professor.nome, professor.telefone, professor.email, professor.cargo, professor.data_nascimento, professor.ano_entrada))
-            return jsonify({"mensagem" : "Cadastro do professor atualizado."}, professor)
+                        if (not primeiro):
+                            sql += ', '
+                        sql += f"ano_entrada =  '{str(dados.get('ano_entrada'))}'"
+
+                    sql += ' WHERE cpf = ' + dados.get('cpf')
+                    # print(sql)
+                    with connection.cursor() as cursor:
+                        cursor.execute(sql)
+            return jsonify("Cadastro do professor atualizado.")
         except psycopg2.IntegrityError as e:
             return f'Erro de integridade: {e}'
         except psycopg2.Error as e:
