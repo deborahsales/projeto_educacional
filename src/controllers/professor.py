@@ -30,8 +30,10 @@ class Prof(Resource):
         try:
             with connection:
                 with connection.cursor() as cursor:
+                    connection.autocommit = False
                     cursor.execute(CREATE_PROFISSIONAL, (cpf, nome, cargo, data_nascimento, ano_entrada))
                     cursor.execute(CREATE_PROFESSOR, (cpf,))
+                    connection.commit
             return f'Professor cadastrado'
         except psycopg2.IntegrityError as e:
             return f'Erro de integridade: {e}'
@@ -90,7 +92,6 @@ class Prof(Resource):
                     # Ainda será necessário verificar funcionamento da variável 'professor', se é possível acessar dessa forma seus atributos
                     if 'nome' in dados:
                         sql += f"nome = '{dados.get('nome')}'"
-                        
                         primeiro = False
                     if 'telefone' in dados:
                         if (not primeiro):
