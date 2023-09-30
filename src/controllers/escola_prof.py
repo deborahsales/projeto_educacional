@@ -28,7 +28,7 @@ class Escola_Prof(Resource):
             with connection:
                 with connection.cursor() as cursor:
                     cursor.execute(CREATE_ESCOLA_PROF, (inep_escola, cpf_professor, vinculo, usuario_plataforma, ch_trabalho, matutino, vespertino, noturno))
-            return f'Vinculo cadastrado na tabela escola_prof'
+            return f'Vinculo cadastrado na tabela escola_prof com sucesso.'
         except psycopg2.IntegrityError as e:
             return f'Erro de integridade: {e}'
         except psycopg2.Error as e:
@@ -44,11 +44,11 @@ class Escola_Prof(Resource):
             with connection:
                 with connection.cursor() as cursor:
                     cursor.execute(READ_ESCOLA_PROF, (cpf_professor, inep_escola))
-                    escola = cursor.fetchone()
-            if escola == None:
-                return f'Vinculo do professor {cpf_professor} na escola {inep_escola} não encontrado'
+                    escola_prof = cursor.fetchone()
+            if escola_prof == None:
+                return f'Vinculo do professor {cpf_professor} na escola {inep_escola} não encontrado.'
             else:
-                return jsonify(escola)
+                return jsonify(escola_prof)
         except psycopg2.IntegrityError as e:
             return f'Erro de integridade: {e}'
         except psycopg2.Error as e:
@@ -64,7 +64,7 @@ class Escola_Prof(Resource):
             with connection:
                 with connection.cursor() as cursor:
                     cursor.execute(DELETE_ESCOLA_PROF, (cpf_professor, inep_escola))
-            return "Vinculo excluído com sucesso da tabela escola_prof"
+            return "Vinculo excluído com sucesso da tabela escola_prof."
         except psycopg2.IntegrityError as e:
             return f'Erro de integridade: {e}'
         except psycopg2.Error as e:
@@ -82,7 +82,7 @@ class Escola_Prof(Resource):
                     cursor.execute(READ_ESCOLA_PROF, (cpf_professor, inep_escola))
                     escola = cursor.fetchone()
                 if escola == None:
-                    return f'Vinculo do professor {cpf_professor} na escola {inep_escola} não encontrado'
+                    return f'Vinculo do professor {cpf_professor} na escola {inep_escola} não encontrado.'
                 else:
                     primeiro = True
                     sql = SQL_UPDATE
@@ -118,7 +118,7 @@ class Escola_Prof(Resource):
                     with connection.cursor() as cursor:
                         cursor.execute(sql)
                     
-            return jsonify("Cadastro escola_prof atualizado.")
+            return jsonify(f'Vínculo atualizado na tabela escola_prof com sucesso.')
         except psycopg2.IntegrityError as e:
             return f'Erro de integridade: {e}'
         except psycopg2.Error as e:
