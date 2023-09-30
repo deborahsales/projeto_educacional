@@ -12,7 +12,7 @@ class Server():
         self.api = Api(self.app,
                        version='1.0',
                        title='API Projeto Educacional',
-                       description='Parte 3 | Etapa 2 - para a disciplina de Banco de Dados I',
+                       description='Parte 4 | Etapa 2 - para a disciplina de Banco de Dados I',
                        doc='/docs',default="Documentação", default_label="api")
     
     def run(self):
