@@ -3,7 +3,7 @@ from flask_restx import Api
 import psycopg2
 
 # Conexão à instância RDS na AWS
-url = 'postgresql://postgres:Isac$&62513@db-isac-rds1.ccjja7bteogf.us-east-1.rds.amazonaws.com:5432/db_isac'
+url = 'postgres://postgres:postgres@deborah-rds.c6u7sarwqno4.us-east-1.rds.amazonaws.com:5432/postgres'
 connection = psycopg2.connect(url)
 
 class Server():

@@ -34,7 +34,7 @@ class Prof(Resource):
                     cursor.execute(CREATE_PROFISSIONAL, (cpf, nome, cargo, data_nascimento, ano_entrada))
                     cursor.execute(CREATE_PROFESSOR, (cpf,))
                     connection.commit
-            return f'Professor cadastrado'
+            return f'Professor cadastrado com sucesso.'
         except psycopg2.IntegrityError as e:
             return f'Erro de integridade: {e}'
         except psycopg2.Error as e:
@@ -51,7 +51,7 @@ class Prof(Resource):
                     cursor.execute(READ_PROFESSOR, (cpf,))
                     professor = cursor.fetchone()
             if professor == None:
-                return f'professor {cpf} não encontrado'
+                return f'Professor {cpf} não encontrado.'
             else:
                 return jsonify(professor)
         except psycopg2.IntegrityError as e:
@@ -68,7 +68,7 @@ class Prof(Resource):
             with connection:
                 with connection.cursor() as cursor:
                     cursor.execute(DELETE_PROFISSIONAL, (cpf,))
-            return "Professor excluído com sucesso."
+            return 'Professor excluído com sucesso.'
         except psycopg2.IntegrityError as e:
             return f'Erro de integridade: {e}'
         except psycopg2.Error as e:
@@ -85,11 +85,10 @@ class Prof(Resource):
                     cursor.execute(READ_PROFESSOR, (cpf,))
                     professor = cursor.fetchone()
                 if professor == None:
-                    return f'professor {cpf} não encontrado'
+                    return f'Professor {cpf} não encontrado.'
                 else:
                     primeiro = True
                     sql = SQL_UPDATE
-                    # Ainda será necessário verificar funcionamento da variável 'professor', se é possível acessar dessa forma seus atributos
                     if 'nome' in dados:
                         sql += f"nome = '{dados.get('nome')}'"
                         primeiro = False
@@ -119,10 +118,9 @@ class Prof(Resource):
                         sql += f"ano_entrada =  '{str(dados.get('ano_entrada'))}'"
 
                     sql += ' WHERE cpf = ' + dados.get('cpf')
-                    # print(sql)
                     with connection.cursor() as cursor:
                         cursor.execute(sql)
-            return jsonify("Cadastro do professor atualizado.")
+            return jsonify("Cadastro do professor atualizado com sucesso.")
         except psycopg2.IntegrityError as e:
             return f'Erro de integridade: {e}'
         except psycopg2.Error as e:

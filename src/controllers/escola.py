@@ -32,7 +32,7 @@ class Escola(Resource):
             with connection:
                 with connection.cursor() as cursor:
                     cursor.execute(CREATE_ESCOLA, (inep, nome, ano_entrada, status, tipo, dependencia, latitude, longitude, endereco, id_rede))
-            return f'Escola cadastrada'
+            return f'Escola cadastrada com sucesso.'
         except psycopg2.IntegrityError as e:
             return f'Erro de integridade: {e}'
         except psycopg2.Error as e:
@@ -49,7 +49,7 @@ class Escola(Resource):
                     cursor.execute(READ_ESCOLA, (inep,))
                     escola = cursor.fetchone()
             if escola == None:
-                return f'Escola {inep} não encontrado'
+                return f'Escola {inep} não encontrada.'
             else:
                 return jsonify(escola)
         except psycopg2.IntegrityError as e:
@@ -66,7 +66,7 @@ class Escola(Resource):
             with connection:
                 with connection.cursor() as cursor:
                     cursor.execute(DELETE_ESCOLA, (inep,))
-            return "Escola excluído com sucesso."
+            return "Escola excluída com sucesso."
         except psycopg2.IntegrityError as e:
             return f'Erro de integridade: {e}'
         except psycopg2.Error as e:
@@ -83,11 +83,10 @@ class Escola(Resource):
                     cursor.execute(READ_ESCOLA, (inep,))
                     escola = cursor.fetchone()
                 if escola == None:
-                    return f'Escola {inep} não encontrado'
+                    return f'Escola {inep} não encontrada.'
                 else:
                     primeiro = True
                     sql = SQL_UPDATE
-                    # Ainda será necessário verificar funcionamento da variável 'professor', se é possível acessar dessa forma seus atributos
                     if 'nome' in dados:
                         sql += f"nome = '{dados.get('nome')}'"
                         primeiro = False
@@ -132,11 +131,10 @@ class Escola(Resource):
                         sql += f"id_rede = '{str(dados.get('id_rede'))}'"
 
                     sql += "WHERE inep = " + dados.get('inep')
-                    print(sql)
                     with connection.cursor() as cursor:
                         cursor.execute(sql)
                     
-            return jsonify("Cadastro da escola atualizado.")
+            return jsonify("Cadastro da escola atualizado com sucesso.")
         except psycopg2.IntegrityError as e:
             return f'Erro de integridade: {e}'
         except psycopg2.Error as e:
