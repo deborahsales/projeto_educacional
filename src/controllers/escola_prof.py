@@ -15,16 +15,16 @@ SQL_UPDATE = 'UPDATE projeto_educacional.escolas_prof SET '
 @api.route('/escola_prof')
 class Escola_Prof(Resource):
     def post(self):
-        dados = request.get_json()
-        inep_escola = dados.get('inep_escola')
-        cpf_professor = dados.get('cpf_professor')
-        vinculo = dados.get('vinculo')
-        usuario_plataforma = dados.get('usuario_plataforma')
-        ch_trabalho = dados.get('ch_trabalho')
-        matutino = dados.get('matutino')
-        vespertino = dados.get('vespertino')
-        noturno = dados.get('noturno')
         try:
+            dados = request.get_json()
+            inep_escola = dados.get('inep_escola')
+            cpf_professor = dados.get('cpf_professor')
+            vinculo = dados.get('vinculo')
+            usuario_plataforma = dados.get('usuario_plataforma')
+            ch_trabalho = dados.get('ch_trabalho')
+            matutino = dados.get('matutino')
+            vespertino = dados.get('vespertino')
+            noturno = dados.get('noturno')
             with connection:
                 with connection.cursor() as cursor:
                     cursor.execute(CREATE_ESCOLA_PROF, (inep_escola, cpf_professor, vinculo, usuario_plataforma, ch_trabalho, matutino, vespertino, noturno))
@@ -37,10 +37,10 @@ class Escola_Prof(Resource):
             return f'Erro inesperado: {e}'
         
     def get(self):
-        dados = request.get_json()
-        inep_escola = dados['inep_escola']      
-        cpf_professor = dados['cpf_professor']
         try:
+            dados = request.get_json()
+            inep_escola = dados['inep_escola']      
+            cpf_professor = dados['cpf_professor']
             with connection:
                 with connection.cursor() as cursor:
                     cursor.execute(READ_ESCOLA_PROF, (cpf_professor, inep_escola))
@@ -51,32 +51,36 @@ class Escola_Prof(Resource):
                 return jsonify(escola_prof)
         except psycopg2.IntegrityError as e:
             return f'Erro de integridade: {e}'
+        except KeyError as e:
+            return f'Chave não encontrada no corpo da requisição: {e}'
         except psycopg2.Error as e:
             return f'Erro no banco de dados: {e}'
         except Exception as e:
             return f'Erro inesperado: {e}'
         
     def delete(self):
-        dados = request.get_json()
-        inep_escola = dados['inep_escola']      
-        cpf_professor = dados['cpf_professor']
         try:
+            dados = request.get_json()
+            inep_escola = dados['inep_escola']      
+            cpf_professor = dados['cpf_professor']
             with connection:
                 with connection.cursor() as cursor:
                     cursor.execute(DELETE_ESCOLA_PROF, (cpf_professor, inep_escola))
             return "Vinculo excluído com sucesso da tabela escola_prof."
         except psycopg2.IntegrityError as e:
             return f'Erro de integridade: {e}'
+        except KeyError as e:
+            return f'Chave não encontrada no corpo da requisição: {e}'
         except psycopg2.Error as e:
             return f'Erro no banco de dados: {e}'
         except Exception as e:
             return f'Erro inesperado: {e}'
         
     def put(self):
-        dados = request.get_json()
-        inep_escola = dados['inep_escola']      
-        cpf_professor = dados['cpf_professor']
         try:
+            dados = request.get_json()
+            inep_escola = dados['inep_escola']      
+            cpf_professor = dados['cpf_professor']
             with connection:
                 with connection.cursor() as cursor:
                     cursor.execute(READ_ESCOLA_PROF, (cpf_professor, inep_escola))
@@ -121,8 +125,10 @@ class Escola_Prof(Resource):
             return jsonify(f'Vínculo atualizado na tabela escola_prof com sucesso.')
         except psycopg2.IntegrityError as e:
             return f'Erro de integridade: {e}'
+        except KeyError as e:
+            return f'Chave não encontrada no corpo da requisição: {e}'
         except psycopg2.Error as e:
-            return f'Erro no banco de dados: {e}'
+            return f'Erro no banco de dados: {e}, {sql}'
         except Exception as e:
             return f'Erro inesperado: {e}'
 

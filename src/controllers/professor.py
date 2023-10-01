@@ -19,15 +19,15 @@ SQL_UPDATE = 'UPDATE projeto_educacional.profissional SET '
 @api.route('/prof')
 class Prof(Resource):
     def post(self):
-        dados = request.get_json()
-        cpf = dados.get('cpf')
-        nome = dados.get('nome')
-        telefone = [dados.get('telefone')]
-        email  = [dados.get('email')]
-        cargo = dados.get('cargo')
-        data_nascimento = dados.get('data_nascimento')
-        ano_entrada = dados.get('ano_entrada')
         try:
+            dados = request.get_json()
+            cpf = dados.get('cpf')
+            nome = dados.get('nome')
+            telefone = [dados.get('telefone')]
+            email  = [dados.get('email')]
+            cargo = dados.get('cargo')
+            data_nascimento = dados.get('data_nascimento')
+            ano_entrada = dados.get('ano_entrada')
             with connection:
                 with connection.cursor() as cursor:
                     connection.autocommit = False
@@ -43,9 +43,9 @@ class Prof(Resource):
             return f'Erro inesperado: {e}'
 
     def get(self):
-        dados = request.get_json()
-        cpf = dados['cpf']
         try:
+            dados = request.get_json()
+            cpf = dados['cpf']
             with connection:
                 with connection.cursor() as cursor:
                     cursor.execute(READ_PROFESSOR, (cpf,))
@@ -62,24 +62,26 @@ class Prof(Resource):
             return f'Erro inesperado: {e}'
         
     def delete(self):
-        dados = request.get_json()
-        cpf = dados.get('cpf')
         try:
+            dados = request.get_json()
+            cpf = dados.get('cpf')
             with connection:
                 with connection.cursor() as cursor:
                     cursor.execute(DELETE_PROFISSIONAL, (cpf,))
             return 'Professor excluído com sucesso.'
         except psycopg2.IntegrityError as e:
             return f'Erro de integridade: {e}'
+        except KeyError as e:
+            return f'Chave não encontrada no corpo da requisição: {e}'
         except psycopg2.Error as e:
             return f'Erro no banco de dados: {e}'
         except Exception as e:
             return f'Erro inesperado: {e}'
         
     def put(self):
-        dados = request.get_json()
-        cpf = dados.get('cpf')
         try:
+            dados = request.get_json()
+            cpf = dados.get('cpf')
             with connection:
                 with connection.cursor() as cursor:
                     cursor.execute(READ_PROFESSOR, (cpf,))
@@ -123,8 +125,10 @@ class Prof(Resource):
             return jsonify("Cadastro do professor atualizado com sucesso.")
         except psycopg2.IntegrityError as e:
             return f'Erro de integridade: {e}'
+        except KeyError as e:
+            return f'Chave não encontrada no corpo da requisição: {e}'
         except psycopg2.Error as e:
-            return f'Erro no banco de dados: {e}'
+            return f'Erro no banco de dados: {e}, {sql}'
         except Exception as e:
             return f'Erro inesperado: {e}'
     

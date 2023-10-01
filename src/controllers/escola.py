@@ -17,18 +17,18 @@ SQL_UPDATE = 'UPDATE projeto_educacional.escola SET '
 @api.route('/escola')
 class Escola(Resource):
     def post(self):
-        dados = request.get_json()
-        inep = dados.get('inep')
-        nome = dados.get('nome')
-        ano_entrada = dados.get('ano_entrada')
-        status  = dados.get('status_escola')
-        tipo = dados.get('tipo')
-        dependencia = dados.get('dependencia')
-        latitude = dados.get('latitude')
-        longitude = dados.get('longitude')
-        endereco = dados.get('endereco')
-        id_rede = dados.get('id_rede')
         try:
+            dados = request.get_json()
+            inep = dados.get('inep')
+            nome = dados.get('nome')
+            ano_entrada = dados.get('ano_entrada')
+            status  = dados.get('status_escola')
+            tipo = dados.get('tipo')
+            dependencia = dados.get('dependencia')
+            latitude = dados.get('latitude')
+            longitude = dados.get('longitude')
+            endereco = dados.get('endereco')
+            id_rede = dados.get('id_rede')
             with connection:
                 with connection.cursor() as cursor:
                     cursor.execute(CREATE_ESCOLA, (inep, nome, ano_entrada, status, tipo, dependencia, latitude, longitude, endereco, id_rede))
@@ -41,9 +41,9 @@ class Escola(Resource):
             return f'Erro inesperado: {e}'
 
     def get(self):
-        dados = request.get_json()
-        inep = dados['inep']
         try:
+            dados = request.get_json()
+            inep = dados['inep']
             with connection:
                 with connection.cursor() as cursor:
                     cursor.execute(READ_ESCOLA, (inep,))
@@ -60,9 +60,9 @@ class Escola(Resource):
             return f'Erro inesperado: {e}'
         
     def delete(self):
-        dados = request.get_json()
-        inep = dados.get('inep')
         try:
+            dados = request.get_json()
+            inep = dados.get('inep')
             with connection:
                 with connection.cursor() as cursor:
                     cursor.execute(DELETE_ESCOLA, (inep,))
@@ -75,9 +75,9 @@ class Escola(Resource):
             return f'Erro inesperado: {e}'
         
     def put(self):
-        dados = request.get_json()
-        inep = dados.get('inep')
         try:
+            dados = request.get_json()
+            inep = dados.get('inep')
             with connection:
                 with connection.cursor() as cursor:
                     cursor.execute(READ_ESCOLA, (inep,))
@@ -138,6 +138,6 @@ class Escola(Resource):
         except psycopg2.IntegrityError as e:
             return f'Erro de integridade: {e}'
         except psycopg2.Error as e:
-            return f'Erro no banco de dados: {e}'
+            return f'Erro no banco de dados: {e}, {sql}'
         except Exception as e:
             return f'Erro inesperado: {e}'
