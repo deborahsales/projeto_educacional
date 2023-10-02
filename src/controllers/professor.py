@@ -7,8 +7,8 @@ from src.server.models.professor import professor, Professor
 
 app, api = server.app, server.api
 
-CREATE_PROFISSIONAL = '''INSERT INTO projeto_educacional.profissional (cpf, nome, cargo, data_nascimento, ano_entrada) 
-                        VALUES (%s, %s, %s, %s, %s)'''
+CREATE_PROFISSIONAL = '''INSERT INTO projeto_educacional.profissional (cpf, nome, telefone, email, cargo, data_nascimento, ano_entrada) 
+                        VALUES (%s, %s, %s, %s, %s, %s, %s)'''
 CREATE_PROFESSOR = 'INSERT INTO projeto_educacional.professor VALUES (%s)'
 READ_PROFESSOR = '''SELECT profi.* FROM projeto_educacional.professor profe 
                     INNER JOIN projeto_educacional.profissional profi USING (cpf) WHERE profe.cpf = %s'''
@@ -31,7 +31,7 @@ class Prof(Resource):
             with connection:
                 with connection.cursor() as cursor:
                     connection.autocommit = False
-                    cursor.execute(CREATE_PROFISSIONAL, (cpf, nome, cargo, data_nascimento, ano_entrada))
+                    cursor.execute(CREATE_PROFISSIONAL, (cpf, nome, telefone, email, cargo, data_nascimento, ano_entrada))
                     cursor.execute(CREATE_PROFESSOR, (cpf,))
                     connection.commit
             return f'Professor cadastrado com sucesso.'
@@ -97,7 +97,7 @@ class Prof(Resource):
                     if 'telefone' in dados:
                         if (not primeiro):
                             sql += ', '
-                        sql += "telefone = '{" + dados.get('telefone') + "}'"
+                        sql += "telefone = '{" + str(dados.get('telefone')) + "}'"
                         primeiro = False
                     if 'email' in dados:
                         if (not primeiro):
@@ -117,9 +117,8 @@ class Prof(Resource):
                     if 'ano_entrada' in dados:
                         if (not primeiro):
                             sql += ', '
-                        sql += f"ano_entrada =  '{str(dados.get('ano_entrada'))}'"
-
-                    sql += ' WHERE cpf = ' + dados.get('cpf')
+                        sql += f"ano_entrada =  {dados.get('ano_entrada')}"
+                    sql += f' WHERE cpf = {cpf}'
                     with connection.cursor() as cursor:
                         cursor.execute(sql)
             return jsonify("Cadastro do professor atualizado com sucesso.")

@@ -130,7 +130,7 @@ class Escola(Resource):
                             sql += ", "
                         sql += f"id_rede = '{str(dados.get('id_rede'))}'"
 
-                    sql += "WHERE inep = " + dados.get('inep')
+                    sql += f'WHERE inep = {inep}'
                     with connection.cursor() as cursor:
                         cursor.execute(sql)
                     
