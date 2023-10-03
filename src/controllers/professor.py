@@ -33,7 +33,7 @@ class Prof(Resource):
                     connection.autocommit = False
                     cursor.execute(CREATE_PROFISSIONAL, (cpf, nome, telefone, email, cargo, data_nascimento, ano_entrada))
                     cursor.execute(CREATE_PROFESSOR, (cpf,))
-                    connection.commit
+                    connection.commit()
             return f'Professor cadastrado com sucesso.'
         except psycopg2.IntegrityError as e:
             return f'Erro de integridade: {e}'
